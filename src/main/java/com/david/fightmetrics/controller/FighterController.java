@@ -2,6 +2,7 @@ package com.david.fightmetrics.controller;
 
 import com.david.fightmetrics.entity.Fighter;
 import com.david.fightmetrics.entity.WeightClass;
+import com.david.fightmetrics.service.FightService;
 import com.david.fightmetrics.service.FighterService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class FighterController {
 
     private final FighterService fighterService;
+    private final FightService fightService;
 
-    public FighterController(FighterService fighterService) {
+    public FighterController(
+            FighterService fighterService,
+            FightService fightService
+    ) {
         this.fighterService = fighterService;
+        this.fightService = fightService;
     }
 
     @GetMapping
@@ -26,14 +32,20 @@ public class FighterController {
             Model model
     ) {
         if (search != null && !search.isBlank()) {
-            model.addAttribute("fighters", fighterService.search(search));
+            model.addAttribute(
+                    "fighters",
+                    fighterService.search(search)
+            );
         } else if (weightClass != null) {
             model.addAttribute(
                     "fighters",
                     fighterService.findByWeightClass(weightClass)
             );
         } else {
-            model.addAttribute("fighters", fighterService.findAll());
+            model.addAttribute(
+                    "fighters",
+                    fighterService.findAll()
+            );
         }
 
         model.addAttribute("search", search);
@@ -44,15 +56,45 @@ public class FighterController {
     }
 
     @GetMapping("/{id}")
-    public String showFighter(@PathVariable Long id, Model model) {
-        model.addAttribute("fighter", fighterService.findById(id));
+    public String showFighter(
+            @PathVariable Long id,
+            Model model
+    ) {
+        Fighter fighter = fighterService.findById(id);
+
+        model.addAttribute("fighter", fighter);
+
+        model.addAttribute(
+                "fights",
+                fightService.findByFighter(fighter)
+        );
+
+        model.addAttribute(
+                "calculatedWins",
+                fightService.countWins(fighter)
+        );
+
+        model.addAttribute(
+                "calculatedLosses",
+                fightService.countLosses(fighter)
+        );
+
+        model.addAttribute(
+                "calculatedDraws",
+                fightService.countDraws(fighter)
+        );
+
         return "fighters/detail";
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("fighter", new Fighter());
-        model.addAttribute("weightClasses", WeightClass.values());
+        model.addAttribute(
+                "weightClasses",
+                WeightClass.values()
+        );
+
         return "fighters/form";
     }
 
@@ -63,7 +105,11 @@ public class FighterController {
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("weightClasses", WeightClass.values());
+            model.addAttribute(
+                    "weightClasses",
+                    WeightClass.values()
+            );
+
             return "fighters/form";
         }
 
@@ -73,9 +119,19 @@ public class FighterController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("fighter", fighterService.findById(id));
-        model.addAttribute("weightClasses", WeightClass.values());
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model
+    ) {
+        model.addAttribute(
+                "fighter",
+                fighterService.findById(id)
+        );
+
+        model.addAttribute(
+                "weightClasses",
+                WeightClass.values()
+        );
 
         return "fighters/form";
     }
@@ -88,7 +144,11 @@ public class FighterController {
             Model model
     ) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("weightClasses", WeightClass.values());
+            model.addAttribute(
+                    "weightClasses",
+                    WeightClass.values()
+            );
+
             return "fighters/form";
         }
 

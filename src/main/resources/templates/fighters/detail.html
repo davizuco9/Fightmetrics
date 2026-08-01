@@ -1,86 +1,300 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${fighter.firstName + ' ' + fighter.lastName + ' | FightMetrics'}">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title
+            th:text="${fighter.firstName + ' ' + fighter.lastName + ' | FightMetrics'}"
+    >
         Luchador | FightMetrics
     </title>
 </head>
+
 <body>
 
 <main>
-    <h1>
-        <span th:text="${fighter.firstName}"></span>
-        <span th:text="${fighter.lastName}"></span>
+
+    <h1 th:text="${fighter.firstName + ' ' + fighter.lastName}">
+        Nombre del luchador
     </h1>
 
-    <h2 th:if="${fighter.nickname != null and !fighter.nickname.isBlank()}"
-        th:text="'&quot;' + ${fighter.nickname} + '&quot;'">
-    </h2>
-
-    <img th:if="${fighter.imageUrl != null and !fighter.imageUrl.isBlank()}"
-         th:src="${fighter.imageUrl}"
-         th:alt="${fighter.firstName + ' ' + fighter.lastName}"
-         width="250">
-
-    <dl>
-        <dt>Nacionalidad</dt>
-        <dd th:text="${fighter.nationality}"></dd>
-
-        <dt>Fecha de nacimiento</dt>
-        <dd th:text="${fighter.birthDate != null ? fighter.birthDate : '-'}"></dd>
-
-        <dt>Altura</dt>
-        <dd th:text="${fighter.heightCm != null ? fighter.heightCm + ' cm' : '-'}"></dd>
-
-        <dt>Alcance</dt>
-        <dd th:text="${fighter.reachCm != null ? fighter.reachCm + ' cm' : '-'}"></dd>
-
-        <dt>Categoría</dt>
-        <dd th:text="${fighter.weightClass}"></dd>
-
-        <dt>Récord</dt>
-        <dd>
-            <span th:text="${fighter.wins}"></span>
-            -
-            <span th:text="${fighter.losses}"></span>
-            -
-            <span th:text="${fighter.draws}"></span>
-        </dd>
-
-        <dt>Victorias por KO/TKO</dt>
-        <dd th:text="${fighter.knockoutWins}"></dd>
-
-        <dt>Victorias por sumisión</dt>
-        <dd th:text="${fighter.submissionWins}"></dd>
-
-        <dt>Victorias por decisión</dt>
-        <dd th:text="${fighter.decisionWins}"></dd>
-
-        <dt>Estado</dt>
-        <dd th:text="${fighter.active ? 'Activo' : 'Retirado'}"></dd>
-    </dl>
-
-    <p>
-        <a th:href="@{/fighters/{id}/edit(id=${fighter.id})}">
-            Editar luchador
-        </a>
+    <p th:if="${fighter.nickname != null and !fighter.nickname.isBlank()}">
+        Apodo:
+        <strong th:text="${fighter.nickname}">
+            Apodo
+        </strong>
     </p>
 
-    <form th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
-          method="post">
+    <section>
+
+        <h2>Información del luchador</h2>
+
+        <dl>
+
+            <dt>Nacionalidad</dt>
+
+            <dd th:text="${fighter.nationality}">
+                España
+            </dd>
+
+            <dt>Categoría</dt>
+
+            <dd th:text="${fighter.weightClass}">
+                FEATHERWEIGHT
+            </dd>
+
+            <dt>Altura</dt>
+
+            <dd
+                    th:text="${fighter.heightCm != null
+                    ? fighter.heightCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </dd>
+
+            <dt>Alcance</dt>
+
+            <dd
+                    th:text="${fighter.reachCm != null
+                    ? fighter.reachCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </dd>
+
+            <dt>Récord registrado</dt>
+
+            <dd
+                    th:text="${fighter.wins
+                    + '-'
+                    + fighter.losses
+                    + '-'
+                    + fighter.draws}"
+            >
+                0-0-0
+            </dd>
+
+            <dt>Récord calculado en FightMetrics</dt>
+
+            <dd
+                    th:text="${calculatedWins
+                    + '-'
+                    + calculatedLosses
+                    + '-'
+                    + calculatedDraws}"
+            >
+                0-0-0
+            </dd>
+
+            <dt>Estado</dt>
+
+            <dd th:text="${fighter.active ? 'Activo' : 'Inactivo'}">
+                Activo
+            </dd>
+
+        </dl>
+
+    </section>
+
+    <section>
+
+        <h2>Historial de combates</h2>
+
+        <p th:if="${#lists.isEmpty(fights)}">
+            Este luchador todavía no tiene combates registrados.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(fights)}">
+
+            <thead>
+
+            <tr>
+                <th>Fecha</th>
+                <th>Evento</th>
+                <th>Rival</th>
+                <th>Resultado</th>
+                <th>Método</th>
+                <th>Finalización</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="fight : ${fights}">
+
+                <td th:text="${fight.event.eventDate}">
+                    2026-06-28
+                </td>
+
+                <td>
+
+                    <a
+                            th:href="@{/events/{id}(id=${fight.event.id})}"
+                            th:text="${fight.event.name}"
+                    >
+                        Evento
+                    </a>
+
+                </td>
+
+                <td>
+
+                    <a
+                            th:if="${fight.redCornerFighter.id == fighter.id}"
+                            th:href="@{/fighters/{id}(id=${fight.blueCornerFighter.id})}"
+                            th:text="${fight.blueCornerFighter.firstName
+                            + ' '
+                            + fight.blueCornerFighter.lastName}"
+                    >
+                        Rival
+                    </a>
+
+                    <a
+                            th:unless="${fight.redCornerFighter.id == fighter.id}"
+                            th:href="@{/fighters/{id}(id=${fight.redCornerFighter.id})}"
+                            th:text="${fight.redCornerFighter.firstName
+                            + ' '
+                            + fight.redCornerFighter.lastName}"
+                    >
+                        Rival
+                    </a>
+
+                </td>
+
+                <td>
+
+                    <span
+                            th:if="${fight.status.name() != 'COMPLETED'}"
+                    >
+                        Pendiente
+                    </span>
+
+                    <span
+                            th:if="${fight.status.name() == 'COMPLETED'
+                            and fight.victoryMethod != null
+                            and fight.victoryMethod.name() == 'DRAW'}"
+                    >
+                        Empate
+                    </span>
+
+                    <span
+                            th:if="${fight.status.name() == 'COMPLETED'
+                            and fight.victoryMethod != null
+                            and fight.victoryMethod.name() == 'NO_CONTEST'}"
+                    >
+                        Sin resultado
+                    </span>
+
+                    <span
+                            th:if="${fight.status.name() == 'COMPLETED'
+                            and fight.winner != null
+                            and fight.winner.id == fighter.id}"
+                    >
+                        Victoria
+                    </span>
+
+                    <span
+                            th:if="${fight.status.name() == 'COMPLETED'
+                            and fight.winner != null
+                            and fight.winner.id != fighter.id}"
+                    >
+                        Derrota
+                    </span>
+
+                    <span
+                            th:if="${fight.status.name() == 'COMPLETED'
+                            and fight.winner == null
+                            and fight.victoryMethod == null}"
+                    >
+                        Sin resultado
+                    </span>
+
+                </td>
+
+                <td
+                        th:text="${fight.victoryMethod != null
+                        ? fight.victoryMethod
+                        : '-'}"
+                >
+                    -
+                </td>
+
+                <td>
+
+                    <span
+                            th:if="${fight.finishRound != null}"
+                            th:text="${'R'
+                            + fight.finishRound
+                            + ' '
+                            + (fight.finishMinute != null
+                                ? fight.finishMinute
+                                : 0)
+                            + ':'
+                            + (fight.finishSecond != null
+                                and fight.finishSecond < 10
+                                ? '0' + fight.finishSecond
+                                : (fight.finishSecond != null
+                                    ? fight.finishSecond
+                                    : '00'))}"
+                    >
+                        R3 1:34
+                    </span>
+
+                    <span th:unless="${fight.finishRound != null}">
+                        -
+                    </span>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <hr>
+
+    <p>
+
+        <a
+                th:href="@{/fighters/{id}/edit(id=${fighter.id})}"
+        >
+            Editar luchador
+        </a>
+
+    </p>
+
+    <form
+            th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
+            method="post"
+    >
+
         <button type="submit">
             Eliminar luchador
         </button>
+
     </form>
 
     <p>
+
         <a th:href="@{/fighters}">
-            Volver al listado
+            Volver al listado de luchadores
         </a>
+
     </p>
+
 </main>
 
 </body>
+
 </html>
