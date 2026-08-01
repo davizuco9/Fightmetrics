@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${fight.id == null ? 'Añadir combate' : 'Editar combate'} + ' | FightMetrics'">
+        Combate | FightMetrics
+    </title>
+</head>
+<body>
+
+<main>
+    <h1 th:text="${fight.id == null ? 'Añadir combate' : 'Editar combate'}">
+        Añadir combate
+    </h1>
+
+    <p th:if="${fightError}" th:text="${fightError}"></p>
+
+    <form
+            th:object="${fight}"
+            th:action="${fight.id == null}
+                ? @{/fights}
+                : @{/fights/{id}(id=${fight.id})}"
+            method="post"
+    >
+
+        <div>
+            <label for="event">Evento</label>
+            <select id="event" th:field="*{event}">
+                <option value="">Selecciona un evento</option>
+
+                <option
+                        th:each="event : ${events}"
+                        th:value="${event.id}"
+                        th:text="${event.name}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="redCornerFighter">Esquina roja</label>
+            <select id="redCornerFighter" th:field="*{redCornerFighter}">
+                <option value="">Selecciona un luchador</option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName + ' ' + fighter.lastName}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="blueCornerFighter">Esquina azul</label>
+            <select id="blueCornerFighter" th:field="*{blueCornerFighter}">
+                <option value="">Selecciona un luchador</option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName + ' ' + fighter.lastName}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="weightClass">Categoría</label>
+            <select id="weightClass" th:field="*{weightClass}">
+                <option value="">Selecciona una categoría</option>
+
+                <option
+                        th:each="weightClass : ${weightClasses}"
+                        th:value="${weightClass}"
+                        th:text="${weightClass}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="scheduledRounds">Asaltos programados</label>
+            <input
+                    id="scheduledRounds"
+                    type="number"
+                    min="1"
+                    max="5"
+                    th:field="*{scheduledRounds}"
+            >
+        </div>
+
+        <div>
+            <label for="status">Estado</label>
+            <select id="status" th:field="*{status}">
+                <option
+                        th:each="fightStatus : ${fightStatuses}"
+                        th:value="${fightStatus}"
+                        th:text="${fightStatus}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="winner">Ganador</label>
+            <select id="winner" th:field="*{winner}">
+                <option value="">Sin ganador todavía</option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName + ' ' + fighter.lastName}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="victoryMethod">Método de victoria</label>
+            <select id="victoryMethod" th:field="*{victoryMethod}">
+                <option value="">Sin resultado todavía</option>
+
+                <option
+                        th:each="victoryMethod : ${victoryMethods}"
+                        th:value="${victoryMethod}"
+                        th:text="${victoryMethod}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="finishRound">Asalto de finalización</label>
+            <input
+                    id="finishRound"
+                    type="number"
+                    min="1"
+                    max="5"
+                    th:field="*{finishRound}"
+            >
+        </div>
+
+        <div>
+            <label for="finishMinute">Minuto</label>
+            <input
+                    id="finishMinute"
+                    type="number"
+                    min="0"
+                    max="5"
+                    th:field="*{finishMinute}"
+            >
+        </div>
+
+        <div>
+            <label for="finishSecond">Segundo</label>
+            <input
+                    id="finishSecond"
+                    type="number"
+                    min="0"
+                    max="59"
+                    th:field="*{finishSecond}"
+            >
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" th:field="*{mainEvent}">
+                Combate estelar
+            </label>
+        </div>
+
+        <button type="submit">Guardar combate</button>
+    </form>
+
+    <p>
+        <a th:if="${fight.event != null}"
+           th:href="@{/events/{id}(id=${fight.event.id})}">
+            Cancelar y volver al evento
+        </a>
+
+        <a th:unless="${fight.event != null}"
+           th:href="@{/events}">
+            Cancelar
+        </a>
+    </p>
+</main>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.david.fightmetrics.controller;
 import com.david.fightmetrics.entity.Event;
 import com.david.fightmetrics.entity.EventStatus;
 import com.david.fightmetrics.service.EventService;
+import com.david.fightmetrics.service.FightService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
 
     private final EventService eventService;
+    private final FightService fightService;
 
-    public EventController(EventService eventService) {
+    public EventController(
+            EventService eventService,
+            FightService fightService
+    ) {
         this.eventService = eventService;
+        this.fightService = fightService;
     }
 
     @GetMapping
@@ -41,8 +47,15 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public String showEvent(@PathVariable Long id, Model model) {
-        model.addAttribute("event", eventService.findById(id));
+    public String showEvent(
+            @PathVariable Long id,
+            Model model
+    ) {
+        Event event = eventService.findById(id);
+
+        model.addAttribute("event", event);
+        model.addAttribute("fights", fightService.findByEvent(event));
+
         return "events/detail";
     }
 
@@ -50,6 +63,7 @@ public class EventController {
     public String showCreateForm(Model model) {
         model.addAttribute("event", new Event());
         model.addAttribute("eventStatuses", EventStatus.values());
+
         return "events/form";
     }
 
@@ -70,7 +84,10 @@ public class EventController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model) {
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model
+    ) {
         model.addAttribute("event", eventService.findById(id));
         model.addAttribute("eventStatuses", EventStatus.values());
 
@@ -98,6 +115,7 @@ public class EventController {
     @PostMapping("/{id}/delete")
     public String deleteEvent(@PathVariable Long id) {
         eventService.deleteById(id);
+
         return "redirect:/events";
     }
 }
