@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${event.name + ' | FightMetrics'}">
+        Evento | FightMetrics
+    </title>
+</head>
+<body>
+
+<main>
+    <h1 th:text="${event.name}"></h1>
+
+    <dl>
+        <dt>Organización</dt>
+        <dd th:text="${event.organization}"></dd>
+
+        <dt>Fecha</dt>
+        <dd th:text="${event.eventDate}"></dd>
+
+        <dt>Ciudad</dt>
+        <dd th:text="${event.city}"></dd>
+
+        <dt>País</dt>
+        <dd th:text="${event.country}"></dd>
+
+        <dt>Estado</dt>
+        <dd th:text="${event.status}"></dd>
+    </dl>
+
+    <p>
+        <a th:href="@{/events/{id}/edit(id=${event.id})}">
+            Editar evento
+        </a>
+    </p>
+
+    <form th:action="@{/events/{id}/delete(id=${event.id})}" method="post">
+        <button type="submit">Eliminar evento</button>
+    </form>
+
+    <p>
+        <a th:href="@{/events}">Volver al listado</a>
+    </p>
+</main>
+
+</body>
+</html>

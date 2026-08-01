@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${event.id == null ? 'Añadir evento' : 'Editar evento'} + ' | FightMetrics'">
+        Evento | FightMetrics
+    </title>
+</head>
+<body>
+
+<main>
+    <h1 th:text="${event.id == null ? 'Añadir evento' : 'Editar evento'}">
+        Añadir evento
+    </h1>
+
+    <form
+            th:object="${event}"
+            th:action="${event.id == null}
+                ? @{/events}
+                : @{/events/{id}(id=${event.id})}"
+            method="post"
+    >
+        <div>
+            <label for="name">Nombre</label>
+            <input id="name" type="text" th:field="*{name}">
+            <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+        </div>
+
+        <div>
+            <label for="organization">Organización</label>
+            <input id="organization" type="text" th:field="*{organization}">
+            <p th:if="${#fields.hasErrors('organization')}" th:errors="*{organization}"></p>
+        </div>
+
+        <div>
+            <label for="eventDate">Fecha</label>
+            <input id="eventDate" type="date" th:field="*{eventDate}">
+            <p th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}"></p>
+        </div>
+
+        <div>
+            <label for="city">Ciudad</label>
+            <input id="city" type="text" th:field="*{city}">
+            <p th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></p>
+        </div>
+
+        <div>
+            <label for="country">País</label>
+            <input id="country" type="text" th:field="*{country}">
+            <p th:if="${#fields.hasErrors('country')}" th:errors="*{country}"></p>
+        </div>
+
+        <div>
+            <label for="status">Estado</label>
+            <select id="status" th:field="*{status}">
+                <option
+                        th:each="eventStatus : ${eventStatuses}"
+                        th:value="${eventStatus}"
+                        th:text="${eventStatus}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit">Guardar</button>
+    </form>
+
+    <p>
+        <a th:href="@{/events}">Cancelar</a>
+    </p>
+</main>
+
+</body>
+</html>

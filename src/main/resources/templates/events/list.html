@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos | FightMetrics</title>
+</head>
+<body>
+
+<main>
+    <h1>Eventos</h1>
+
+    <a th:href="@{/events/new}">Añadir evento</a>
+
+    <form th:action="@{/events}" method="get">
+        <label for="search">Buscar evento</label>
+        <input
+                id="search"
+                type="text"
+                name="search"
+                th:value="${search}"
+                placeholder="UFC 317..."
+        >
+        <button type="submit">Buscar</button>
+    </form>
+
+    <form th:action="@{/events}" method="get">
+        <label for="status">Estado</label>
+
+        <select id="status" name="status">
+            <option value="">Todos</option>
+
+            <option
+                    th:each="eventStatus : ${eventStatuses}"
+                    th:value="${eventStatus}"
+                    th:text="${eventStatus}"
+                    th:selected="${eventStatus == selectedStatus}">
+            </option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <p th:if="${#lists.isEmpty(events)}">
+        No hay eventos registrados.
+    </p>
+
+    <table th:unless="${#lists.isEmpty(events)}">
+        <thead>
+        <tr>
+            <th>Evento</th>
+            <th>Organización</th>
+            <th>Fecha</th>
+            <th>Lugar</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.name}"></td>
+            <td th:text="${event.organization}"></td>
+            <td th:text="${event.eventDate}"></td>
+            <td>
+                <span th:text="${event.city}"></span>,
+                <span th:text="${event.country}"></span>
+            </td>
+            <td th:text="${event.status}"></td>
+            <td>
+                <a th:href="@{/events/{id}(id=${event.id})}">Ver</a>
+                <a th:href="@{/events/{id}/edit(id=${event.id})}">Editar</a>
+
+                <form
+                        th:action="@{/events/{id}/delete(id=${event.id})}"
+                        method="post"
+                        style="display:inline"
+                >
+                    <button type="submit">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <a th:href="@{/}">Volver al inicio</a>
+    </p>
+</main>
+
+</body>
+</html>
