@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${fighter.id == null ? 'Añadir luchador' : 'Editar luchador'} + ' | FightMetrics'">
+        Luchador | FightMetrics
+    </title>
+</head>
+<body>
+
+<main>
+    <h1 th:text="${fighter.id == null ? 'Añadir luchador' : 'Editar luchador'}">
+        Añadir luchador
+    </h1>
+
+    <form
+            th:object="${fighter}"
+            th:action="${fighter.id == null}
+                ? @{/fighters}
+                : @{/fighters/{id}(id=${fighter.id})}"
+            method="post"
+    >
+        <div>
+            <label for="firstName">Nombre</label>
+            <input id="firstName" type="text" th:field="*{firstName}">
+            <p th:if="${#fields.hasErrors('firstName')}"
+               th:errors="*{firstName}"></p>
+        </div>
+
+        <div>
+            <label for="lastName">Apellidos</label>
+            <input id="lastName" type="text" th:field="*{lastName}">
+            <p th:if="${#fields.hasErrors('lastName')}"
+               th:errors="*{lastName}"></p>
+        </div>
+
+        <div>
+            <label for="nickname">Apodo</label>
+            <input id="nickname" type="text" th:field="*{nickname}">
+        </div>
+
+        <div>
+            <label for="birthDate">Fecha de nacimiento</label>
+            <input id="birthDate" type="date" th:field="*{birthDate}">
+        </div>
+
+        <div>
+            <label for="nationality">Nacionalidad</label>
+            <input id="nationality" type="text" th:field="*{nationality}">
+            <p th:if="${#fields.hasErrors('nationality')}"
+               th:errors="*{nationality}"></p>
+        </div>
+
+        <div>
+            <label for="heightCm">Altura (cm)</label>
+            <input id="heightCm" type="number" step="0.1" th:field="*{heightCm}">
+        </div>
+
+        <div>
+            <label for="reachCm">Alcance (cm)</label>
+            <input id="reachCm" type="number" step="0.1" th:field="*{reachCm}">
+        </div>
+
+        <div>
+            <label for="weightClass">Categoría</label>
+            <select id="weightClass" th:field="*{weightClass}">
+                <option value="">Selecciona una categoría</option>
+                <option
+                        th:each="weightClass : ${weightClasses}"
+                        th:value="${weightClass}"
+                        th:text="${weightClass}">
+                </option>
+            </select>
+            <p th:if="${#fields.hasErrors('weightClass')}"
+               th:errors="*{weightClass}"></p>
+        </div>
+
+        <div>
+            <label for="wins">Victorias</label>
+            <input id="wins" type="number" min="0" th:field="*{wins}">
+        </div>
+
+        <div>
+            <label for="losses">Derrotas</label>
+            <input id="losses" type="number" min="0" th:field="*{losses}">
+        </div>
+
+        <div>
+            <label for="draws">Empates</label>
+            <input id="draws" type="number" min="0" th:field="*{draws}">
+        </div>
+
+        <div>
+            <label for="knockoutWins">Victorias por KO/TKO</label>
+            <input id="knockoutWins" type="number" min="0" th:field="*{knockoutWins}">
+        </div>
+
+        <div>
+            <label for="submissionWins">Victorias por sumisión</label>
+            <input id="submissionWins" type="number" min="0" th:field="*{submissionWins}">
+        </div>
+
+        <div>
+            <label for="decisionWins">Victorias por decisión</label>
+            <input id="decisionWins" type="number" min="0" th:field="*{decisionWins}">
+        </div>
+
+        <div>
+            <label for="imageUrl">URL de imagen</label>
+            <input id="imageUrl" type="url" th:field="*{imageUrl}">
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" th:field="*{active}">
+                Luchador activo
+            </label>
+        </div>
+
+        <button type="submit">
+            Guardar
+        </button>
+    </form>
+
+    <p>
+        <a th:href="@{/fighters}">
+            Cancelar
+        </a>
+    </p>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${fighter.firstName + ' ' + fighter.lastName + ' | FightMetrics'}">
+        Luchador | FightMetrics
+    </title>
+</head>
+<body>
+
+<main>
+    <h1>
+        <span th:text="${fighter.firstName}"></span>
+        <span th:text="${fighter.lastName}"></span>
+    </h1>
+
+    <h2 th:if="${fighter.nickname != null and !fighter.nickname.isBlank()}"
+        th:text="'&quot;' + ${fighter.nickname} + '&quot;'">
+    </h2>
+
+    <img th:if="${fighter.imageUrl != null and !fighter.imageUrl.isBlank()}"
+         th:src="${fighter.imageUrl}"
+         th:alt="${fighter.firstName + ' ' + fighter.lastName}"
+         width="250">
+
+    <dl>
+        <dt>Nacionalidad</dt>
+        <dd th:text="${fighter.nationality}"></dd>
+
+        <dt>Fecha de nacimiento</dt>
+        <dd th:text="${fighter.birthDate != null ? fighter.birthDate : '-'}"></dd>
+
+        <dt>Altura</dt>
+        <dd th:text="${fighter.heightCm != null ? fighter.heightCm + ' cm' : '-'}"></dd>
+
+        <dt>Alcance</dt>
+        <dd th:text="${fighter.reachCm != null ? fighter.reachCm + ' cm' : '-'}"></dd>
+
+        <dt>Categoría</dt>
+        <dd th:text="${fighter.weightClass}"></dd>
+
+        <dt>Récord</dt>
+        <dd>
+            <span th:text="${fighter.wins}"></span>
+            -
+            <span th:text="${fighter.losses}"></span>
+            -
+            <span th:text="${fighter.draws}"></span>
+        </dd>
+
+        <dt>Victorias por KO/TKO</dt>
+        <dd th:text="${fighter.knockoutWins}"></dd>
+
+        <dt>Victorias por sumisión</dt>
+        <dd th:text="${fighter.submissionWins}"></dd>
+
+        <dt>Victorias por decisión</dt>
+        <dd th:text="${fighter.decisionWins}"></dd>
+
+        <dt>Estado</dt>
+        <dd th:text="${fighter.active ? 'Activo' : 'Retirado'}"></dd>
+    </dl>
+
+    <p>
+        <a th:href="@{/fighters/{id}/edit(id=${fighter.id})}">
+            Editar luchador
+        </a>
+    </p>
+
+    <form th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
+          method="post">
+        <button type="submit">
+            Eliminar luchador
+        </button>
+    </form>
+
+    <p>
+        <a th:href="@{/fighters}">
+            Volver al listado
+        </a>
+    </p>
+</main>
+
+</body>
+</html>

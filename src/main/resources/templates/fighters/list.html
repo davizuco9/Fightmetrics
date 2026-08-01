@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luchadores | FightMetrics</title>
+</head>
+<body>
+
+<main>
+    <h1>Luchadores</h1>
+
+    <a th:href="@{/fighters/new}">
+        Añadir luchador
+    </a>
+
+    <form th:action="@{/fighters}" method="get">
+        <label for="search">Buscar por nombre</label>
+
+        <input
+                id="search"
+                type="text"
+                name="search"
+                th:value="${search}"
+                placeholder="Topuria, Jones..."
+        >
+
+        <button type="submit">Buscar</button>
+    </form>
+
+    <form th:action="@{/fighters}" method="get">
+        <label for="weightClass">Categoría</label>
+
+        <select id="weightClass" name="weightClass">
+            <option value="">Todas</option>
+
+            <option
+                    th:each="weightClass : ${weightClasses}"
+                    th:value="${weightClass}"
+                    th:text="${weightClass}"
+                    th:selected="${weightClass == selectedWeightClass}">
+            </option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+
+    <p th:if="${#lists.isEmpty(fighters)}">
+        No hay luchadores registrados.
+    </p>
+
+    <table th:unless="${#lists.isEmpty(fighters)}">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apodo</th>
+            <th>Categoría</th>
+            <th>Récord</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="fighter : ${fighters}">
+            <td>
+                <span th:text="${fighter.firstName}"></span>
+                <span th:text="${fighter.lastName}"></span>
+            </td>
+
+            <td th:text="${fighter.nickname ?: '-'}"></td>
+
+            <td th:text="${fighter.weightClass}"></td>
+
+            <td>
+                <span th:text="${fighter.wins}"></span>
+                -
+                <span th:text="${fighter.losses}"></span>
+                -
+                <span th:text="${fighter.draws}"></span>
+            </td>
+
+            <td th:text="${fighter.active ? 'Activo' : 'Retirado'}"></td>
+
+            <td>
+                <a th:href="@{/fighters/{id}(id=${fighter.id})}">
+                    Ver
+                </a>
+
+                <a th:href="@{/fighters/{id}/edit(id=${fighter.id})}">
+                    Editar
+                </a>
+
+                <form
+                        th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
+                        method="post"
+                        style="display: inline"
+                >
+                    <button type="submit">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <a th:href="@{/}">
+            Volver al inicio
+        </a>
+    </p>
+</main>
+
+</body>
+</html>
