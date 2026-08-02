@@ -43,6 +43,8 @@
         </strong>
     </p>
 
+    <!-- FAVORITOS -->
+
     <section th:if="${authenticated}">
 
         <form
@@ -52,6 +54,7 @@
                 )}"
                 method="post"
         >
+
             <input
                     type="hidden"
                     name="redirectUrl"
@@ -61,6 +64,7 @@
             <button type="submit">
                 Añadir a favoritos
             </button>
+
         </form>
 
         <form
@@ -70,6 +74,7 @@
                 )}"
                 method="post"
         >
+
             <input
                     type="hidden"
                     name="redirectUrl"
@@ -79,6 +84,7 @@
             <button type="submit">
                 Quitar de favoritos
             </button>
+
         </form>
 
         <p>
@@ -95,10 +101,13 @@
             <a th:href="@{/login}">
                 Inicia sesión
             </a>
+
             para guardar este luchador como favorito.
         </p>
 
     </section>
+
+    <!-- INFORMACIÓN GENERAL -->
 
     <section>
 
@@ -171,6 +180,166 @@
         </dl>
 
     </section>
+
+    <!-- ESTADÍSTICAS AVANZADAS -->
+
+    <section>
+
+        <h2>Estadísticas avanzadas</h2>
+
+        <table>
+
+            <thead>
+
+            <tr>
+                <th>Estadística</th>
+                <th>Valor</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr>
+                <td>Combates registrados</td>
+
+                <td th:text="${stats.totalFights}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Victorias</td>
+
+                <td th:text="${stats.wins}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Derrotas</td>
+
+                <td th:text="${stats.losses}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Empates</td>
+
+                <td th:text="${stats.draws}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Victorias por KO/TKO</td>
+
+                <td th:text="${stats.koTkoWins}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Victorias por sumisión</td>
+
+                <td th:text="${stats.submissionWins}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Victorias por decisión</td>
+
+                <td th:text="${stats.decisionWins}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Otras victorias</td>
+
+                <td th:text="${stats.otherWins}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Racha actual de victorias</td>
+
+                <td th:text="${stats.currentWinStreak}">
+                    0
+                </td>
+            </tr>
+
+            <tr>
+                <td>Porcentaje de victorias</td>
+
+                <td
+                        th:text="${stats.winPercentage + ' %'}"
+                >
+                    0 %
+                </td>
+            </tr>
+
+            <tr>
+                <td>Porcentaje de finalización</td>
+
+                <td
+                        th:text="${stats.finishPercentage + ' %'}"
+                >
+                    0 %
+                </td>
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        <p th:if="${stats.totalFights == 0}">
+            Todavía no hay suficientes combates registrados para calcular
+            estadísticas reales de este luchador.
+        </p>
+
+    </section>
+
+    <!-- DISTRIBUCIÓN DE VICTORIAS -->
+
+    <section>
+
+        <h2>Distribución de victorias</h2>
+
+        <dl>
+
+            <dt>KO/TKO</dt>
+
+            <dd th:text="${stats.koTkoWins}">
+                0
+            </dd>
+
+            <dt>Sumisiones</dt>
+
+            <dd th:text="${stats.submissionWins}">
+                0
+            </dd>
+
+            <dt>Decisiones</dt>
+
+            <dd th:text="${stats.decisionWins}">
+                0
+            </dd>
+
+            <dt>Otros métodos</dt>
+
+            <dd th:text="${stats.otherWins}">
+                0
+            </dd>
+
+        </dl>
+
+    </section>
+
+    <!-- HISTORIAL -->
 
     <section>
 
@@ -331,6 +500,8 @@
 
     </section>
 
+    <!-- ADMINISTRACIÓN -->
+
     <div sec:authorize="hasRole('ADMIN')">
 
         <hr>
@@ -338,28 +509,42 @@
         <h2>Administración</h2>
 
         <p>
+
             <a
                     th:href="@{/fighters/{id}/edit(id=${fighter.id})}"
             >
                 Editar luchador
             </a>
+
         </p>
 
         <form
                 th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
                 method="post"
         >
+
             <button type="submit">
                 Eliminar luchador
             </button>
+
         </form>
 
     </div>
 
     <p>
+
         <a th:href="@{/fighters}">
             Volver al listado de luchadores
         </a>
+
+    </p>
+
+    <p>
+
+        <a th:href="@{/rankings}">
+            Ver rankings
+        </a>
+
     </p>
 
 </main>

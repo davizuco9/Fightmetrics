@@ -31,6 +31,26 @@ public interface FightRepository extends JpaRepository<Fight, Long> {
             FightStatus status
     );
 
+    long countByWinnerAndStatusAndVictoryMethod(
+            Fighter winner,
+            FightStatus status,
+            VictoryMethod victoryMethod
+    );
+
+    @Query("""
+            SELECT COUNT(f)
+            FROM Fight f
+            WHERE f.status = :status
+              AND (
+                    f.redCornerFighter = :fighter
+                    OR f.blueCornerFighter = :fighter
+              )
+            """)
+    long countTotalFights(
+            @Param("fighter") Fighter fighter,
+            @Param("status") FightStatus status
+    );
+
     @Query("""
             SELECT COUNT(f)
             FROM Fight f

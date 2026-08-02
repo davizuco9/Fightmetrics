@@ -1,5 +1,6 @@
 package com.david.fightmetrics.service;
 
+import com.david.fightmetrics.dto.FighterStats;
 import com.david.fightmetrics.entity.Event;
 import com.david.fightmetrics.entity.Fight;
 import com.david.fightmetrics.entity.Fighter;
@@ -80,6 +81,142 @@ public class FightService {
                 FightStatus.COMPLETED,
                 VictoryMethod.DRAW
         );
+    }
+
+    public FighterStats calculateStats(Fighter fighter) {
+        List<Fight> fights = findByFighter(fighter);
+
+        long totalFights = fightRepository.countTotalFights(
+                fighter,
+                FightStatus.COMPLETED
+        );
+
+        long wins = countWins(fighter);
+        long losses = countLosses(fighter);
+        long draws = countDraws(fighter);
+
+        long koTkoWins =
+                fightRepository.countByWinnerAndStatusAndVictoryMethod(
+                        fighter,
+                        FightStatus.COMPLETED,
+                        VictoryMethod.KO_TKO
+                );
+
+        long submissionWins =
+                fightRepository.countByWinnerAndStatusAndVictoryMethod(
+                        fighter,
+                        FightStatus.COMPLETED,
+                        VictoryMethod.SUBMISSION
+                );
+
+        long unanimousDecisionWins =
+                fightRepository.countByWinnerAndStatusAndVictoryMethod(
+                        fighter,
+                        FightStatus.COMPLETED,
+                        VictoryMethod.UNANIMOUS_DECISION
+                );
+
+        long splitDecisionWins =
+                fightRepository.countByWinnerAndStatusAndVictoryMethod(
+                        fighter,
+                        FightStatus.COMPLETED,
+                        VictoryMethod.SPLIT_DECISION
+                );
+
+        long majorityDecisionWins =
+                fightRepository.countByWinnerAndStatusAndVictoryMethod(
+                        fighter,
+                        FightStatus.COMPLETED,
+                        VictoryMethod.MAJORITY_DECISION
+                );
+
+        long decisionWins =
+                unanimousDecisionWins
+                        + splitDecisionWins
+                        + majorityDecisionWins;
+
+        long otherWins =
+                Math.max(
+                        0,
+                        wins
+                                - koTkoWins
+                                - submissionWins
+                                - decisionWins
+                );
+
+        long currentWinStreak =
+                calculateCurrentWinStreak(
+                        fighter,
+                        fights
+                );
+
+        double winPercentage =
+                totalFights > 0
+                        ? roundPercentage(
+                        wins * 100.0 / totalFights
+                )
+                        : 0.0;
+
+        long finishWins =
+                koTkoWins + submissionWins;
+
+        double finishPercentage =
+                wins > 0
+                        ? roundPercentage(
+                        finishWins * 100.0 / wins
+                )
+                        : 0.0;
+
+        return new FighterStats(
+                totalFights,
+                wins,
+                losses,
+                draws,
+                koTkoWins,
+                submissionWins,
+                decisionWins,
+                otherWins,
+                currentWinStreak,
+                winPercentage,
+                finishPercentage
+        );
+    }
+
+    private long calculateCurrentWinStreak(
+            Fighter fighter,
+            List<Fight> fights
+    ) {
+        long streak = 0;
+
+        for (Fight fight : fights) {
+            if (fight.getStatus() != FightStatus.COMPLETED) {
+                continue;
+            }
+
+            if (fight.getVictoryMethod() == VictoryMethod.NO_CONTEST) {
+                continue;
+            }
+
+            if (fight.getVictoryMethod() == VictoryMethod.DRAW) {
+                break;
+            }
+
+            if (fight.getWinner() == null) {
+                break;
+            }
+
+            if (fight.getWinner().getId().equals(fighter.getId())) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    private double roundPercentage(double value) {
+        return Math.round(value * 10.0) / 10.0;
     }
 
     private void validateFight(Fight fight) {

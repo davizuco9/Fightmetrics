@@ -90,6 +90,11 @@ public class FighterController {
                 fightService.countDraws(fighter)
         );
 
+        model.addAttribute(
+                "stats",
+                fightService.calculateStats(fighter)
+        );
+
         boolean authenticated =
                 authentication != null
                         && authentication.isAuthenticated()
