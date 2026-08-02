@@ -3,6 +3,7 @@ package com.david.fightmetrics.config;
 import com.david.fightmetrics.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,12 +30,12 @@ public class SecurityConfig {
     public DaoAuthenticationProvider authenticationProvider(
             PasswordEncoder passwordEncoder
     ) {
-        DaoAuthenticationProvider authenticationProvider =
+        DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider(customUserDetailsService);
 
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        provider.setPasswordEncoder(passwordEncoder);
 
-        return authenticationProvider;
+        return provider;
     }
 
     @Bean
@@ -45,29 +46,80 @@ public class SecurityConfig {
 
         http
                 .authenticationProvider(authenticationProvider)
+
                 .authorizeHttpRequests(auth -> auth
+
+                        // Recursos y páginas públicas
                         .requestMatchers(
                                 "/",
                                 "/login",
                                 "/register",
+                                "/access-denied",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
                         ).permitAll()
+
+                        // Formularios administrativos de luchadores
                         .requestMatchers(
+                                HttpMethod.GET,
+                                "/fighters/new",
+                                "/fighters/*/edit"
+                        ).hasRole("ADMIN")
+
+                        // Formularios administrativos de eventos
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/events/new",
+                                "/events/*/edit"
+                        ).hasRole("ADMIN")
+
+                        // Todas las rutas de gestión de combates
+                        .requestMatchers("/fights/**")
+                        .hasRole("ADMIN")
+
+                        // Crear, modificar o eliminar luchadores
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/fighters",
+                                "/fighters/**"
+                        ).hasRole("ADMIN")
+
+                        // Crear, modificar o eliminar eventos
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/events",
+                                "/events/**"
+                        ).hasRole("ADMIN")
+
+                        // Consulta pública
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/fighters",
                                 "/fighters/**",
+                                "/events",
                                 "/events/**"
                         ).permitAll()
+
+                        // El resto requiere iniciar sesión
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
+
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/access-denied")
                 );
 
         return http.build();

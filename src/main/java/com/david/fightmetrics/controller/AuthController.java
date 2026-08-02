@@ -44,8 +44,17 @@ public class AuthController {
             userService.register(user);
             return "redirect:/login?registered";
         } catch (IllegalArgumentException exception) {
-            model.addAttribute("registerError", exception.getMessage());
+            model.addAttribute(
+                    "registerError",
+                    exception.getMessage()
+            );
+
             return "auth/register";
         }
+    }
+
+    @GetMapping("/access-denied")
+    public String showAccessDeniedPage() {
+        return "auth/access-denied";
     }
 }

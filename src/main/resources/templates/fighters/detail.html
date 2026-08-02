@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +13,10 @@
     >
 
     <title
-            th:text="${fighter.firstName + ' ' + fighter.lastName + ' | FightMetrics'}"
+            th:text="${fighter.firstName
+            + ' '
+            + fighter.lastName
+            + ' | FightMetrics'}"
     >
         Luchador | FightMetrics
     </title>
@@ -20,12 +26,18 @@
 
 <main>
 
-    <h1 th:text="${fighter.firstName + ' ' + fighter.lastName}">
+    <h1
+            th:text="${fighter.firstName + ' ' + fighter.lastName}"
+    >
         Nombre del luchador
     </h1>
 
-    <p th:if="${fighter.nickname != null and !fighter.nickname.isBlank()}">
+    <p
+            th:if="${fighter.nickname != null
+            and !fighter.nickname.isBlank()}"
+    >
         Apodo:
+
         <strong th:text="${fighter.nickname}">
             Apodo
         </strong>
@@ -262,35 +274,35 @@
 
     </section>
 
-    <hr>
+    <div sec:authorize="hasRole('ADMIN')">
 
-    <p>
+        <hr>
 
-        <a
-                th:href="@{/fighters/{id}/edit(id=${fighter.id})}"
+        <h2>Administración</h2>
+
+        <p>
+            <a
+                    th:href="@{/fighters/{id}/edit(id=${fighter.id})}"
+            >
+                Editar luchador
+            </a>
+        </p>
+
+        <form
+                th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
+                method="post"
         >
-            Editar luchador
-        </a>
+            <button type="submit">
+                Eliminar luchador
+            </button>
+        </form>
 
-    </p>
-
-    <form
-            th:action="@{/fighters/{id}/delete(id=${fighter.id})}"
-            method="post"
-    >
-
-        <button type="submit">
-            Eliminar luchador
-        </button>
-
-    </form>
+    </div>
 
     <p>
-
         <a th:href="@{/fighters}">
             Volver al listado de luchadores
         </a>
-
     </p>
 
 </main>
