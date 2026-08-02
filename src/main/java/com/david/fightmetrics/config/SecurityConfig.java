@@ -107,7 +107,13 @@ public class SecurityConfig {
                                 "/rankings/**"
                         ).hasRole("ADMIN")
 
-                        // Consulta pública de luchadores, eventos y rankings
+                        // Procesar el formulario público del comparador
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/compare"
+                        ).permitAll()
+
+                        // Consulta pública
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/fighters",
@@ -115,7 +121,9 @@ public class SecurityConfig {
                                 "/events",
                                 "/events/**",
                                 "/rankings",
-                                "/rankings/**"
+                                "/rankings/**",
+                                "/compare",
+                                "/compare/**"
                         ).permitAll()
 
                         // Favoritos requieren iniciar sesión

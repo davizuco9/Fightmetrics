@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Resultado de comparación | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <h1>Comparación de luchadores</h1>
+
+    <section>
+
+        <h2>
+            <a
+                    th:href="@{/fighters/{id}(id=${fighter1.id})}"
+                    th:text="${fighter1.firstName
+                    + ' '
+                    + fighter1.lastName}"
+            >
+                Luchador 1
+            </a>
+
+            <span> VS </span>
+
+            <a
+                    th:href="@{/fighters/{id}(id=${fighter2.id})}"
+                    th:text="${fighter2.firstName
+                    + ' '
+                    + fighter2.lastName}"
+            >
+                Luchador 2
+            </a>
+        </h2>
+
+    </section>
+
+    <table>
+
+        <thead>
+
+        <tr>
+            <th>Estadística</th>
+
+            <th
+                    th:text="${fighter1.firstName
+                    + ' '
+                    + fighter1.lastName}"
+            >
+                Luchador 1
+            </th>
+
+            <th
+                    th:text="${fighter2.firstName
+                    + ' '
+                    + fighter2.lastName}"
+            >
+                Luchador 2
+            </th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td>Apodo</td>
+
+            <td
+                    th:text="${fighter1.nickname != null
+                    and !fighter1.nickname.isBlank()
+                    ? fighter1.nickname
+                    : '-'}"
+            >
+                -
+            </td>
+
+            <td
+                    th:text="${fighter2.nickname != null
+                    and !fighter2.nickname.isBlank()
+                    ? fighter2.nickname
+                    : '-'}"
+            >
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td>Nacionalidad</td>
+
+            <td th:text="${fighter1.nationality}">
+                -
+            </td>
+
+            <td th:text="${fighter2.nationality}">
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td>Categoría</td>
+
+            <td th:text="${fighter1.weightClass}">
+                -
+            </td>
+
+            <td th:text="${fighter2.weightClass}">
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td>Altura</td>
+
+            <td
+                    th:text="${fighter1.heightCm != null
+                    ? fighter1.heightCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </td>
+
+            <td
+                    th:text="${fighter2.heightCm != null
+                    ? fighter2.heightCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td>Alcance</td>
+
+            <td
+                    th:text="${fighter1.reachCm != null
+                    ? fighter1.reachCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </td>
+
+            <td
+                    th:text="${fighter2.reachCm != null
+                    ? fighter2.reachCm + ' cm'
+                    : '-'}"
+            >
+                -
+            </td>
+        </tr>
+
+        <tr>
+            <td>Récord registrado</td>
+
+            <td
+                    th:text="${fighter1.wins
+                    + '-'
+                    + fighter1.losses
+                    + '-'
+                    + fighter1.draws}"
+            >
+                0-0-0
+            </td>
+
+            <td
+                    th:text="${fighter2.wins
+                    + '-'
+                    + fighter2.losses
+                    + '-'
+                    + fighter2.draws}"
+            >
+                0-0-0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Combates en FightMetrics</td>
+
+            <td th:text="${stats1.totalFights}">
+                0
+            </td>
+
+            <td th:text="${stats2.totalFights}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Victorias calculadas</td>
+
+            <td th:text="${stats1.wins}">
+                0
+            </td>
+
+            <td th:text="${stats2.wins}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Derrotas calculadas</td>
+
+            <td th:text="${stats1.losses}">
+                0
+            </td>
+
+            <td th:text="${stats2.losses}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Empates calculados</td>
+
+            <td th:text="${stats1.draws}">
+                0
+            </td>
+
+            <td th:text="${stats2.draws}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Victorias por KO/TKO</td>
+
+            <td th:text="${stats1.koTkoWins}">
+                0
+            </td>
+
+            <td th:text="${stats2.koTkoWins}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Victorias por sumisión</td>
+
+            <td th:text="${stats1.submissionWins}">
+                0
+            </td>
+
+            <td th:text="${stats2.submissionWins}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Victorias por decisión</td>
+
+            <td th:text="${stats1.decisionWins}">
+                0
+            </td>
+
+            <td th:text="${stats2.decisionWins}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Racha actual de victorias</td>
+
+            <td th:text="${stats1.currentWinStreak}">
+                0
+            </td>
+
+            <td th:text="${stats2.currentWinStreak}">
+                0
+            </td>
+        </tr>
+
+        <tr>
+            <td>Porcentaje de victoria</td>
+
+            <td
+                    th:text="${stats1.winPercentage + ' %'}"
+            >
+                0 %
+            </td>
+
+            <td
+                    th:text="${stats2.winPercentage + ' %'}"
+            >
+                0 %
+            </td>
+        </tr>
+
+        <tr>
+            <td>Porcentaje de finalización</td>
+
+            <td
+                    th:text="${stats1.finishPercentage + ' %'}"
+            >
+                0 %
+            </td>
+
+            <td
+                    th:text="${stats2.finishPercentage + ' %'}"
+            >
+                0 %
+            </td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <p>
+        <a th:href="@{/compare}">
+            Realizar otra comparación
+        </a>
+    </p>
+
+    <p>
+        <a th:href="@{/fighters}">
+            Volver a luchadores
+        </a>
+    </p>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Comparar luchadores | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <h1>Comparador de luchadores</h1>
+
+    <p>
+        Selecciona dos luchadores para comparar sus datos,
+        récord y estadísticas.
+    </p>
+
+    <p
+            th:if="${compareError}"
+            th:text="${compareError}"
+    >
+        Error
+    </p>
+
+    <form
+            th:action="@{/compare}"
+            method="post"
+    >
+
+        <div>
+
+            <label for="fighter1Id">
+                Primer luchador
+            </label>
+
+            <select
+                    id="fighter1Id"
+                    name="fighter1Id"
+                    required
+            >
+
+                <option value="">
+                    Selecciona un luchador
+                </option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName
+                        + ' '
+                        + fighter.lastName
+                        + (fighter.nickname != null
+                            and !fighter.nickname.isBlank()
+                            ? ' (' + fighter.nickname + ')'
+                            : '')}"
+                        th:selected="${selectedFighter1Id != null
+                        and selectedFighter1Id == fighter.id}"
+                >
+                </option>
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <label for="fighter2Id">
+                Segundo luchador
+            </label>
+
+            <select
+                    id="fighter2Id"
+                    name="fighter2Id"
+                    required
+            >
+
+                <option value="">
+                    Selecciona un luchador
+                </option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName
+                        + ' '
+                        + fighter.lastName
+                        + (fighter.nickname != null
+                            and !fighter.nickname.isBlank()
+                            ? ' (' + fighter.nickname + ')'
+                            : '')}"
+                        th:selected="${selectedFighter2Id != null
+                        and selectedFighter2Id == fighter.id}"
+                >
+                </option>
+
+            </select>
+
+        </div>
+
+        <button type="submit">
+            Comparar luchadores
+        </button>
+
+    </form>
+
+    <p>
+        <a th:href="@{/fighters}">
+            Ver todos los luchadores
+        </a>
+    </p>
+
+    <p>
+        <a th:href="@{/}">
+            Volver al inicio
+        </a>
+    </p>
+
+</main>
+
+</body>
+
+</html>
