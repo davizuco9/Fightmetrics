@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Importar luchadores | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <header>
+        <h1>Importar luchadores desde CSV</h1>
+
+        <p>
+            Esta herramienta permite cargar varios luchadores
+            desde un único archivo CSV.
+        </p>
+    </header>
+
+    <section>
+
+        <h2>Formato esperado</h2>
+
+        <p>
+            El archivo debe usar punto y coma como separador.
+        </p>
+
+        <pre>firstName;lastName;nickname;nationality;weightClass;heightCm;reachCm;wins;losses;draws;active
+Ilia;Topuria;El Matador;España;FEATHERWEIGHT;170;175;17;0;0;true
+Islam;Makhachev;;Rusia;LIGHTWEIGHT;178;179;27;1;0;true</pre>
+
+        <p>
+            Categorías admitidas:
+        </p>
+
+        <ul>
+            <li>FLYWEIGHT</li>
+            <li>BANTAMWEIGHT</li>
+            <li>FEATHERWEIGHT</li>
+            <li>LIGHTWEIGHT</li>
+            <li>WELTERWEIGHT</li>
+            <li>MIDDLEWEIGHT</li>
+            <li>LIGHT_HEAVYWEIGHT</li>
+            <li>HEAVYWEIGHT</li>
+        </ul>
+
+    </section>
+
+    <section>
+
+        <h2>Seleccionar archivo</h2>
+
+        <p
+                th:if="${importError}"
+                th:text="${importError}"
+        >
+            Error de importación
+        </p>
+
+        <form
+                th:action="@{/admin/import/fighters}"
+                method="post"
+                enctype="multipart/form-data"
+        >
+
+            <div>
+                <label for="file">
+                    Archivo CSV
+                </label>
+
+                <input
+                        id="file"
+                        type="file"
+                        name="file"
+                        accept=".csv,text/csv"
+                        required
+                >
+            </div>
+
+            <button type="submit">
+                Importar luchadores
+            </button>
+
+        </form>
+
+    </section>
+
+    <section th:if="${importResult != null}">
+
+        <h2>Resultado de la importación</h2>
+
+        <dl>
+
+            <dt>Filas procesadas</dt>
+
+            <dd th:text="${importResult.totalRows}">
+                0
+            </dd>
+
+            <dt>Luchadores importados</dt>
+
+            <dd th:text="${importResult.importedRows}">
+                0
+            </dd>
+
+            <dt>Filas con error</dt>
+
+            <dd th:text="${importResult.failedRows}">
+                0
+            </dd>
+
+        </dl>
+
+        <div th:if="${importResult.hasErrors()}">
+
+            <h3>Errores encontrados</h3>
+
+            <ul>
+
+                <li
+                        th:each="error : ${importResult.errors}"
+                        th:text="${error}"
+                >
+                    Error
+                </li>
+
+            </ul>
+
+        </div>
+
+        <p th:unless="${importResult.hasErrors()}">
+            Todos los luchadores se importaron correctamente.
+        </p>
+
+    </section>
+
+    <nav>
+
+        <p>
+            <a th:href="@{/fighters}">
+                Ver luchadores
+            </a>
+        </p>
+
+        <p>
+            <a th:href="@{/}">
+                Volver al inicio
+            </a>
+        </p>
+
+    </nav>
+
+</main>
+
+</body>
+
+</html>

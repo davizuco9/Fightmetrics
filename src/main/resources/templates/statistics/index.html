@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Estadísticas globales | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <header>
+
+        <h1>Estadísticas globales de MMA</h1>
+
+        <p>
+            Clasificaciones calculadas a partir de los combates
+            registrados en FightMetrics.
+        </p>
+
+    </header>
+
+    <!-- MÁS VICTORIAS -->
+
+    <section>
+
+        <h2>Más victorias</h2>
+
+        <p th:if="${#lists.isEmpty(mostWins)}">
+            Todavía no hay datos suficientes.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(mostWins)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Categoría</th>
+                <th>Victorias</th>
+                <th>Récord calculado</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${mostWins}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.fighter.weightClass}">
+                    LIGHTWEIGHT
+                </td>
+
+                <td th:text="${row.stats.wins}">
+                    0
+                </td>
+
+                <td
+                        th:text="${row.stats.wins
+                        + '-'
+                        + row.stats.losses
+                        + '-'
+                        + row.stats.draws}"
+                >
+                    0-0-0
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- MÁS KO/TKO -->
+
+    <section>
+
+        <h2>Más victorias por KO/TKO</h2>
+
+        <p th:if="${#lists.isEmpty(mostKoTkoWins)}">
+            Todavía no hay victorias por KO/TKO registradas.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(mostKoTkoWins)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Categoría</th>
+                <th>KO/TKO</th>
+                <th>Finalización</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${mostKoTkoWins}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.fighter.weightClass}">
+                    LIGHTWEIGHT
+                </td>
+
+                <td th:text="${row.stats.koTkoWins}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.finishPercentage + ' %'}">
+                    0 %
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- MÁS SUMISIONES -->
+
+    <section>
+
+        <h2>Más victorias por sumisión</h2>
+
+        <p th:if="${#lists.isEmpty(mostSubmissionWins)}">
+            Todavía no hay victorias por sumisión registradas.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(mostSubmissionWins)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Categoría</th>
+                <th>Sumisiones</th>
+                <th>Finalización</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${mostSubmissionWins}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.fighter.weightClass}">
+                    LIGHTWEIGHT
+                </td>
+
+                <td th:text="${row.stats.submissionWins}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.finishPercentage + ' %'}">
+                    0 %
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- MAYOR RACHA -->
+
+    <section>
+
+        <h2>Mayor racha actual de victorias</h2>
+
+        <p th:if="${#lists.isEmpty(longestWinStreaks)}">
+            Todavía no hay rachas activas registradas.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(longestWinStreaks)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Categoría</th>
+                <th>Racha actual</th>
+                <th>Victorias totales</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${longestWinStreaks}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.fighter.weightClass}">
+                    LIGHTWEIGHT
+                </td>
+
+                <td th:text="${row.stats.currentWinStreak}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.wins}">
+                    0
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- MEJOR PORCENTAJE DE VICTORIAS -->
+
+    <section>
+
+        <h2>Mejor porcentaje de victorias</h2>
+
+        <p th:if="${#lists.isEmpty(bestWinPercentages)}">
+            Todavía no hay datos suficientes.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(bestWinPercentages)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Combates</th>
+                <th>Victorias</th>
+                <th>Porcentaje</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${bestWinPercentages}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.stats.totalFights}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.wins}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.winPercentage + ' %'}">
+                    0 %
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <!-- MEJOR PORCENTAJE DE FINALIZACIÓN -->
+
+    <section>
+
+        <h2>Mejor porcentaje de finalización</h2>
+
+        <p th:if="${#lists.isEmpty(bestFinishPercentages)}">
+            Todavía no hay datos suficientes.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(bestFinishPercentages)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>KO/TKO</th>
+                <th>Sumisiones</th>
+                <th>Porcentaje</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="row, status : ${bestFinishPercentages}">
+
+                <td th:text="${status.count}">
+                    1
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${row.fighter.id})}"
+                            th:text="${row.fighter.firstName
+                            + ' '
+                            + row.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td th:text="${row.stats.koTkoWins}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.submissionWins}">
+                    0
+                </td>
+
+                <td th:text="${row.stats.finishPercentage + ' %'}">
+                    0 %
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <nav>
+
+        <p>
+            <a th:href="@{/compare}">
+                Comparar dos luchadores
+            </a>
+        </p>
+
+        <p>
+            <a th:href="@{/rankings}">
+                Ver rankings oficiales
+            </a>
+        </p>
+
+        <p>
+            <a th:href="@{/fighters}">
+                Ver todos los luchadores
+            </a>
+        </p>
+
+        <p>
+            <a th:href="@{/}">
+                Volver al inicio
+            </a>
+        </p>
+
+    </nav>
+
+</main>
+
+</body>
+
+</html>

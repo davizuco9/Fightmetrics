@@ -60,6 +60,11 @@ public class SecurityConfig {
                                 "/images/**"
                         ).permitAll()
 
+                        // Todas las herramientas administrativas
+                        .requestMatchers(
+                                "/admin/**"
+                        ).hasRole("ADMIN")
+
                         // Formularios administrativos de luchadores
                         .requestMatchers(
                                 HttpMethod.GET,
@@ -123,7 +128,9 @@ public class SecurityConfig {
                                 "/rankings",
                                 "/rankings/**",
                                 "/compare",
-                                "/compare/**"
+                                "/compare/**",
+                                "/statistics",
+                                "/statistics/**"
                         ).permitAll()
 
                         // Favoritos requieren iniciar sesión
