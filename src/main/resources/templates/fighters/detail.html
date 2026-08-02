@@ -43,6 +43,63 @@
         </strong>
     </p>
 
+    <section th:if="${authenticated}">
+
+        <form
+                th:if="${!isFavorite}"
+                th:action="@{/favorites/fighters/{fighterId}(
+                fighterId=${fighter.id}
+                )}"
+                method="post"
+        >
+            <input
+                    type="hidden"
+                    name="redirectUrl"
+                    th:value="${'/fighters/' + fighter.id}"
+            >
+
+            <button type="submit">
+                Añadir a favoritos
+            </button>
+        </form>
+
+        <form
+                th:if="${isFavorite}"
+                th:action="@{/favorites/fighters/{fighterId}/delete(
+                fighterId=${fighter.id}
+                )}"
+                method="post"
+        >
+            <input
+                    type="hidden"
+                    name="redirectUrl"
+                    th:value="${'/fighters/' + fighter.id}"
+            >
+
+            <button type="submit">
+                Quitar de favoritos
+            </button>
+        </form>
+
+        <p>
+            <a th:href="@{/favorites}">
+                Ver mis favoritos
+            </a>
+        </p>
+
+    </section>
+
+    <section th:unless="${authenticated}">
+
+        <p>
+            <a th:href="@{/login}">
+                Inicia sesión
+            </a>
+            para guardar este luchador como favorito.
+        </p>
+
+    </section>
+
     <section>
 
         <h2>Información del luchador</h2>

@@ -2,9 +2,11 @@ package com.david.fightmetrics.controller;
 
 import com.david.fightmetrics.entity.Fighter;
 import com.david.fightmetrics.entity.WeightClass;
+import com.david.fightmetrics.service.FavoriteService;
 import com.david.fightmetrics.service.FightService;
 import com.david.fightmetrics.service.FighterService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,13 +18,16 @@ public class FighterController {
 
     private final FighterService fighterService;
     private final FightService fightService;
+    private final FavoriteService favoriteService;
 
     public FighterController(
             FighterService fighterService,
-            FightService fightService
+            FightService fightService,
+            FavoriteService favoriteService
     ) {
         this.fighterService = fighterService;
         this.fightService = fightService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping
@@ -58,6 +63,7 @@ public class FighterController {
     @GetMapping("/{id}")
     public String showFighter(
             @PathVariable Long id,
+            Authentication authentication,
             Model model
     ) {
         Fighter fighter = fighterService.findById(id);
@@ -83,6 +89,25 @@ public class FighterController {
                 "calculatedDraws",
                 fightService.countDraws(fighter)
         );
+
+        boolean authenticated =
+                authentication != null
+                        && authentication.isAuthenticated()
+                        && !"anonymousUser".equals(authentication.getName());
+
+        model.addAttribute("authenticated", authenticated);
+
+        if (authenticated) {
+            model.addAttribute(
+                    "isFavorite",
+                    favoriteService.isFavorite(
+                            authentication.getName(),
+                            fighter.getId()
+                    )
+            );
+        } else {
+            model.addAttribute("isFavorite", false);
+        }
 
         return "fighters/detail";
     }

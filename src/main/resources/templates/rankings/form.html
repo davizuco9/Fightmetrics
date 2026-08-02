@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title
+            th:text="${rankingEntry.id == null
+            ? 'Añadir ranking | FightMetrics'
+            : 'Editar ranking | FightMetrics'}"
+    >
+        Ranking | FightMetrics
+    </title>
+</head>
+
+<body>
+
+<main>
+
+    <h1
+            th:text="${rankingEntry.id == null
+            ? 'Añadir entrada al ranking'
+            : 'Editar entrada del ranking'}"
+    >
+        Añadir entrada al ranking
+    </h1>
+
+    <p
+            th:if="${rankingError}"
+            th:text="${rankingError}"
+    >
+        Error
+    </p>
+
+    <form
+            th:object="${rankingEntry}"
+            th:action="${rankingEntry.id == null}
+            ? @{/rankings}
+            : @{/rankings/{id}(id=${rankingEntry.id})}"
+            method="post"
+    >
+
+        <div>
+            <label for="organization">
+                Organización
+            </label>
+
+            <input
+                    id="organization"
+                    type="text"
+                    th:field="*{organization}"
+                    required
+            >
+
+            <p
+                    th:if="${#fields.hasErrors('organization')}"
+                    th:errors="*{organization}"
+            >
+            </p>
+        </div>
+
+        <div>
+            <label for="rankingType">
+                Tipo de ranking
+            </label>
+
+            <select
+                    id="rankingType"
+                    th:field="*{rankingType}"
+                    required
+            >
+
+                <option value="">
+                    Selecciona un tipo
+                </option>
+
+                <option
+                        th:each="rankingType : ${rankingTypes}"
+                        th:value="${rankingType}"
+                        th:text="${rankingType}"
+                >
+                </option>
+
+            </select>
+
+            <p
+                    th:if="${#fields.hasErrors('rankingType')}"
+                    th:errors="*{rankingType}"
+            >
+            </p>
+        </div>
+
+        <div>
+            <label for="weightClass">
+                Categoría
+            </label>
+
+            <select
+                    id="weightClass"
+                    th:field="*{weightClass}"
+            >
+
+                <option value="">
+                    Sin categoría para Pound for Pound
+                </option>
+
+                <option
+                        th:each="weightClass : ${weightClasses}"
+                        th:value="${weightClass}"
+                        th:text="${weightClass}"
+                >
+                </option>
+
+            </select>
+        </div>
+
+        <div>
+            <label for="fighter">
+                Luchador
+            </label>
+
+            <select
+                    id="fighter"
+                    th:field="*{fighter}"
+                    required
+            >
+
+                <option value="">
+                    Selecciona un luchador
+                </option>
+
+                <option
+                        th:each="fighter : ${fighters}"
+                        th:value="${fighter.id}"
+                        th:text="${fighter.firstName
+                        + ' '
+                        + fighter.lastName}"
+                >
+                </option>
+
+            </select>
+
+            <p
+                    th:if="${#fields.hasErrors('fighter')}"
+                    th:errors="*{fighter}"
+            >
+            </p>
+        </div>
+
+        <div>
+            <label for="position">
+                Posición
+            </label>
+
+            <input
+                    id="position"
+                    type="number"
+                    min="1"
+                    th:field="*{position}"
+                    required
+            >
+
+            <p
+                    th:if="${#fields.hasErrors('position')}"
+                    th:errors="*{position}"
+            >
+            </p>
+        </div>
+
+        <div>
+            <label for="previousPosition">
+                Posición anterior
+            </label>
+
+            <input
+                    id="previousPosition"
+                    type="number"
+                    min="1"
+                    th:field="*{previousPosition}"
+            >
+        </div>
+
+        <div>
+            <label for="rankingDate">
+                Fecha del ranking
+            </label>
+
+            <input
+                    id="rankingDate"
+                    type="date"
+                    th:field="*{rankingDate}"
+            >
+        </div>
+
+        <div>
+            <label>
+                <input
+                        type="checkbox"
+                        th:field="*{champion}"
+                >
+
+                Campeón
+            </label>
+        </div>
+
+        <button type="submit">
+            Guardar entrada
+        </button>
+
+    </form>
+
+    <p>
+        <a th:href="@{/rankings}">
+            Cancelar y volver a rankings
+        </a>
+    </p>
+
+</main>
+
+</body>
+
+</html>

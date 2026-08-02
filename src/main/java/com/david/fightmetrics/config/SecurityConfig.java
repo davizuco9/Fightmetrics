@@ -74,9 +74,17 @@ public class SecurityConfig {
                                 "/events/*/edit"
                         ).hasRole("ADMIN")
 
+                        // Formularios administrativos de rankings
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/rankings/new",
+                                "/rankings/*/edit"
+                        ).hasRole("ADMIN")
+
                         // Todas las rutas de gestión de combates
-                        .requestMatchers("/fights/**")
-                        .hasRole("ADMIN")
+                        .requestMatchers(
+                                "/fights/**"
+                        ).hasRole("ADMIN")
 
                         // Crear, modificar o eliminar luchadores
                         .requestMatchers(
@@ -92,14 +100,28 @@ public class SecurityConfig {
                                 "/events/**"
                         ).hasRole("ADMIN")
 
-                        // Consulta pública
+                        // Crear, modificar o eliminar rankings
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/rankings",
+                                "/rankings/**"
+                        ).hasRole("ADMIN")
+
+                        // Consulta pública de luchadores, eventos y rankings
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/fighters",
                                 "/fighters/**",
                                 "/events",
-                                "/events/**"
+                                "/events/**",
+                                "/rankings",
+                                "/rankings/**"
                         ).permitAll()
+
+                        // Favoritos requieren iniciar sesión
+                        .requestMatchers(
+                                "/favorites/**"
+                        ).authenticated()
 
                         // El resto requiere iniciar sesión
                         .anyRequest().authenticated()

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Rankings | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <h1>Rankings de MMA</h1>
+
+    <div sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/rankings/new}">
+            Añadir entrada al ranking
+        </a>
+    </div>
+
+    <form
+            th:action="@{/rankings}"
+            method="get"
+    >
+
+        <div>
+            <label for="organization">
+                Organización
+            </label>
+
+            <input
+                    id="organization"
+                    name="organization"
+                    type="text"
+                    th:value="${organization}"
+                    placeholder="UFC"
+            >
+        </div>
+
+        <div>
+            <label for="rankingType">
+                Tipo de ranking
+            </label>
+
+            <select
+                    id="rankingType"
+                    name="rankingType"
+            >
+                <option
+                        th:each="rankingType : ${rankingTypes}"
+                        th:value="${rankingType}"
+                        th:text="${rankingType}"
+                        th:selected="${rankingType == selectedRankingType}"
+                >
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="weightClass">
+                Categoría
+            </label>
+
+            <select
+                    id="weightClass"
+                    name="weightClass"
+            >
+                <option value="">
+                    Selecciona una categoría
+                </option>
+
+                <option
+                        th:each="weightClass : ${weightClasses}"
+                        th:value="${weightClass}"
+                        th:text="${weightClass}"
+                        th:selected="${weightClass == selectedWeightClass}"
+                >
+                </option>
+            </select>
+        </div>
+
+        <button type="submit">
+            Mostrar ranking
+        </button>
+
+    </form>
+
+    <section>
+
+        <h2>
+            <span th:text="${organization}">
+                UFC
+            </span>
+
+            <span> · </span>
+
+            <span th:text="${selectedRankingType}">
+                POUND_FOR_POUND
+            </span>
+
+            <span
+                    th:if="${selectedRankingType.name() == 'WEIGHT_CLASS'}"
+                    th:text="${' · ' + selectedWeightClass}"
+            >
+            </span>
+        </h2>
+
+        <p th:if="${#lists.isEmpty(rankingEntries)}">
+            Todavía no hay luchadores en este ranking.
+        </p>
+
+        <table th:unless="${#lists.isEmpty(rankingEntries)}">
+
+            <thead>
+            <tr>
+                <th>Posición</th>
+                <th>Luchador</th>
+                <th>Apodo</th>
+                <th>Categoría</th>
+                <th>Récord</th>
+                <th>Movimiento</th>
+                <th>Fecha</th>
+
+                <th sec:authorize="hasRole('ADMIN')">
+                    Acciones
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="entry : ${rankingEntries}">
+
+                <td>
+                    <strong
+                            th:if="${entry.champion}"
+                    >
+                        C
+                    </strong>
+
+                    <span
+                            th:unless="${entry.champion}"
+                            th:text="${entry.position}"
+                    >
+                        1
+                    </span>
+                </td>
+
+                <td>
+                    <a
+                            th:href="@{/fighters/{id}(id=${entry.fighter.id})}"
+                            th:text="${entry.fighter.firstName
+                            + ' '
+                            + entry.fighter.lastName}"
+                    >
+                        Luchador
+                    </a>
+                </td>
+
+                <td
+                        th:text="${entry.fighter.nickname != null
+                        and !entry.fighter.nickname.isBlank()
+                        ? entry.fighter.nickname
+                        : '-'}"
+                >
+                    -
+                </td>
+
+                <td
+                        th:text="${entry.weightClass != null
+                        ? entry.weightClass
+                        : entry.fighter.weightClass}"
+                >
+                    LIGHTWEIGHT
+                </td>
+
+                <td
+                        th:text="${entry.fighter.wins
+                        + '-'
+                        + entry.fighter.losses
+                        + '-'
+                        + entry.fighter.draws}"
+                >
+                    0-0-0
+                </td>
+
+                <td>
+
+                    <span
+                            th:if="${entry.previousPosition == null}"
+                    >
+                        Nueva entrada
+                    </span>
+
+                    <span
+                            th:if="${entry.previousPosition != null
+                            and entry.previousPosition > entry.position}"
+                            th:text="${'Sube '
+                            + (entry.previousPosition - entry.position)}"
+                    >
+                        Sube
+                    </span>
+
+                    <span
+                            th:if="${entry.previousPosition != null
+                            and entry.previousPosition < entry.position}"
+                            th:text="${'Baja '
+                            + (entry.position - entry.previousPosition)}"
+                    >
+                        Baja
+                    </span>
+
+                    <span
+                            th:if="${entry.previousPosition != null
+                            and entry.previousPosition == entry.position}"
+                    >
+                        Sin cambios
+                    </span>
+
+                </td>
+
+                <td th:text="${entry.rankingDate}">
+                    2026-08-02
+                </td>
+
+                <td sec:authorize="hasRole('ADMIN')">
+
+                    <a
+                            th:href="@{/rankings/{id}/edit(id=${entry.id})}"
+                    >
+                        Editar
+                    </a>
+
+                    <form
+                            th:action="@{/rankings/{id}/delete(id=${entry.id})}"
+                            method="post"
+                            style="display:inline"
+                    >
+                        <button type="submit">
+                            Eliminar
+                        </button>
+                    </form>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <p>
+        <a th:href="@{/}">
+            Volver al inicio
+        </a>
+    </p>
+
+</main>
+
+</body>
+
+</html>

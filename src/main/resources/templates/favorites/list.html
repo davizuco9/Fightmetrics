@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+    <title>Mis favoritos | FightMetrics</title>
+</head>
+
+<body>
+
+<main>
+
+    <h1>Mis luchadores favoritos</h1>
+
+    <p>
+        Total:
+        <strong th:text="${favoriteCount}">
+            0
+        </strong>
+    </p>
+
+    <p th:if="${#lists.isEmpty(favorites)}">
+        Todavía no has guardado ningún luchador como favorito.
+    </p>
+
+    <table th:unless="${#lists.isEmpty(favorites)}">
+
+        <thead>
+        <tr>
+            <th>Luchador</th>
+            <th>Apodo</th>
+            <th>Categoría</th>
+            <th>Récord</th>
+            <th>Añadido</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="favorite : ${favorites}">
+
+            <td>
+                <a
+                        th:href="@{/fighters/{id}(id=${favorite.fighter.id})}"
+                        th:text="${favorite.fighter.firstName
+                        + ' '
+                        + favorite.fighter.lastName}"
+                >
+                    Luchador
+                </a>
+            </td>
+
+            <td
+                    th:text="${favorite.fighter.nickname != null
+                    and !favorite.fighter.nickname.isBlank()
+                    ? favorite.fighter.nickname
+                    : '-'}"
+            >
+                -
+            </td>
+
+            <td th:text="${favorite.fighter.weightClass}">
+                Categoría
+            </td>
+
+            <td
+                    th:text="${favorite.fighter.wins
+                    + '-'
+                    + favorite.fighter.losses
+                    + '-'
+                    + favorite.fighter.draws}"
+            >
+                0-0-0
+            </td>
+
+            <td th:text="${favorite.createdAt}">
+                Fecha
+            </td>
+
+            <td>
+                <form
+                        th:action="@{/favorites/fighters/{fighterId}/delete(
+                        fighterId=${favorite.fighter.id}
+                        )}"
+                        method="post"
+                >
+                    <button type="submit">
+                        Quitar de favoritos
+                    </button>
+                </form>
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <p>
+        <a th:href="@{/fighters}">
+            Buscar luchadores
+        </a>
+    </p>
+
+    <p>
+        <a th:href="@{/}">
+            Volver al inicio
+        </a>
+    </p>
+
+</main>
+
+</body>
+</html>
